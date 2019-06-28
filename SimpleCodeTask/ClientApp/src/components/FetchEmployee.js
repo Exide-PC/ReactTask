@@ -24,15 +24,17 @@ export class FetchEmployee extends Component {
     if (this.state.loading)
       return <h2><em>Loading...</em></h2>;
 
+    const { pageNum, pageCount, employees } = this.state;
+
     return (
       <div>
         <h1>Employee list</h1>
         <p>This component demonstrates fetching data from the server.</p>
         <PageSelector
-          pageNum={this.state.pageNum}
-          pageCount={this.state.pageCount}
+          pageNum={pageNum}
+          pageCount={pageCount}
           onPageClick={(p) => this.onPageClick(p)} />
-        <EmployeeTable employees={this.state.employees} />        
+        <EmployeeTable employees={employees} />        
       </div>
     );
   }

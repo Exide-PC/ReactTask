@@ -1,5 +1,4 @@
 ﻿import React, { PureComponent } from 'react';
-var classNames = require('classnames');
 
 class PageSelector extends PureComponent {
   constructor(props) {
@@ -11,13 +10,14 @@ class PageSelector extends PureComponent {
   }
   render() {
     let elements = [];
+    const { pageCount, pageNum } = this.props;
 
-    for (let i = 1; i <= this.props.pageCount; i++) {
-      let isActive = i === this.props.pageNum;
+    for (let i = 1; i <= pageCount; i++) {
+      let isActive = i === pageNum;
 
       elements.push(
         <li onClick={() => this.click(i)} className={isActive ? "active" : ""}>
-          <a href="#">{i}</a>
+          <a>{i}</a>
         </li>);
     }
 

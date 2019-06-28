@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 export class EmployeeTable extends Component {
-  displayName = EmployeeTable.name
 
   constructor(props) {
     super(props);
