@@ -1,50 +1,38 @@
 import React, { Component } from 'react';
+import EmployeeApi from './EmployeeApi';
+import { EmployeeTable } from './EmployeeTable';
+import PageSelector from './PageSelector';
 
 export class FetchEmployee extends Component {
-  displayName = FetchEmployee.name
 
   constructor(props) {
     super(props);
-    this.state = { employees: [], loading: true };
+    this.state = { loading: true };
 
-    fetch('api/Employee/')
-      .then(response => response.json())
-        .then(data => {
-          this.setState({ ...data, loading: false });
-      });
+    EmployeeApi.getEmployees(1, (data) => {
+      this.setState({ ...data, loading: false });
+    });
   }
 
-  static renderEmployeeTable(employees) {
-    return (
-      <table className='table'>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Salary</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map(employee =>
-            <tr key={employee.name}>
-              <td>{employee.name}</td>
-              <td>{employee.salary}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    );
+  onPageClick(pageNum) {
+    EmployeeApi.getEmployees(pageNum, (data) => {
+      this.setState({ ...data, loading: false });
+    });
   }
 
-  render() {
-    let contents = this.state.loading
-      ? <p><em>Loading...</em></p>
-      : FetchEmployee.renderEmployeeTable(this.state.employees);
+  render() {    
+    if (this.state.loading)
+      return <h2><em>Loading...</em></h2>;
 
     return (
       <div>
         <h1>Employee list</h1>
         <p>This component demonstrates fetching data from the server.</p>
-        {contents}
+        <PageSelector
+          pageNum={this.state.pageNum}
+          pageCount={this.state.pageCount}
+          onPageClick={(p) => this.onPageClick(p)} />
+        <EmployeeTable employees={this.state.employees} />        
       </div>
     );
   }
