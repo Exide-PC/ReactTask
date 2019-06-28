@@ -9,8 +9,21 @@ namespace SimpleCodeTask.Controllers
     [Route("api/[controller]")]
     public class EmployeeController : Controller
     {
-        static List<Employee> list = Enumerable.Range(1, 100)
-            .Select(n => new Employee() { Name = n.ToString(), Salary = n * 1000 })
+        public EmployeeController()
+        {
+
+        }
+
+        static List<Employee> list = Enumerable.Range(1, 30)
+            .Select(n =>
+            new Employee()
+            {
+                Id = n,
+                Name = n.ToString(),
+                Salary = n * 1000,
+                Email = $"{n}@mail.ru",
+                Birth = DateTime.Now
+            })
             .ToList();
 
         const int COUNT_ON_PAGE = 10;
@@ -40,10 +53,35 @@ namespace SimpleCodeTask.Controllers
             return Json(data);
         }
 
+        [HttpPost("add")]
+        public ActionResult InsertEmployee()
+        {
+            Employee employee = new Employee()
+            {
+                Name = Request.Form["name"],
+                Email = Request.Form["email"],
+                Salary = int.Parse(Request.Form["salary"]),
+                Birth = DateTime.Parse(Request.Form["birth"])
+            };
+
+            list.Add(employee);
+            return Ok();
+        }
+
+        [HttpDelete("delete/{id}")]
+        public ActionResult Delete(int id)
+        {
+            list = list.Where(e => e.Id != id).ToList();
+            return Ok();
+        }
+
         public class Employee
         {
+            public int Id { get; set; }
             public string Name { get; set; }
             public int Salary { get; set; }
+            public string Email { get; set; }
+            public DateTime Birth { get; set; }
         }
 
     }

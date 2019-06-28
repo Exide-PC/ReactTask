@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import EmployeeApi from './EmployeeApi';
 import { EmployeeTable } from './EmployeeTable';
 import PageSelector from './PageSelector';
+import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router-dom';
 
 export class FetchEmployee extends Component {
 
@@ -9,14 +11,23 @@ export class FetchEmployee extends Component {
     super(props);
     this.state = { loading: true };
 
-    EmployeeApi.getEmployees(1, (data) => {
+    EmployeeApi.get(1, (data) => {
       this.setState({ ...data, loading: false });
     });
   }
 
   onPageClick(pageNum) {
-    EmployeeApi.getEmployees(pageNum, (data) => {
+    EmployeeApi.get(pageNum, (data) => {
       this.setState({ ...data, loading: false });
+    });
+  }
+
+  onDelete(id) {
+    EmployeeApi.delete(id, (resp) => {
+      const { pageNum } = this.state;
+      EmployeeApi.get(pageNum, (data) => {
+        this.setState({ ...data, loading: false })
+      })
     });
   }
 
@@ -30,11 +41,16 @@ export class FetchEmployee extends Component {
       <div>
         <h1>Employee list</h1>
         <p>This component demonstrates fetching data from the server.</p>
+        <Link to={'employee/1'}>
+            Add new
+        </Link>
         <PageSelector
           pageNum={pageNum}
           pageCount={pageCount}
           onPageClick={(p) => this.onPageClick(p)} />
-        <EmployeeTable employees={employees} />        
+        <EmployeeTable
+          employees={employees}
+          onDelete={(id) => this.onDelete(id)} />        
       </div>
     );
   }
