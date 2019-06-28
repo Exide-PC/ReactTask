@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import EmployeeApi from './EmployeeApi';
 import { EmployeeTable } from './EmployeeTable';
 import PageSelector from './PageSelector';
-import { LinkContainer } from 'react-router-bootstrap';
 import { Link } from 'react-router-dom';
 
 export class FetchEmployee extends Component {
@@ -29,6 +28,10 @@ export class FetchEmployee extends Component {
         this.setState({ ...data, loading: false })
       })
     });
+  }
+
+  onUpdate(employee) {
+    debugger;
   }
 
   render() {    

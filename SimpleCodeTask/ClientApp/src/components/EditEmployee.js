@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom'
 import DatePicker from "react-datepicker";
+import { withRouter } from 'react-router-dom'
 
 import "react-datepicker/dist/react-datepicker.css";
 import EmployeeApi from './EmployeeApi';
@@ -18,19 +18,13 @@ class EditEmployee extends Component {
   onSubmit(event) {
     const data = new FormData(event.target);
     EmployeeApi.add(data, (responce) => {
-      this.setState({ redirect: true });
+      this.props.history.push("/");
     });
 
     event.preventDefault();
   }
 
   render() {
-
-    if (this.state.redirect) {
-      return <Redirect to='/' />;
-    }
-      
-
     return (
       <form onSubmit={(e) => this.onSubmit(e)}>
         <p>
@@ -67,4 +61,4 @@ class EditEmployee extends Component {
   }
 }
 
-export default EditEmployee;
+export default withRouter(EditEmployee);
