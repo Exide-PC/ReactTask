@@ -1,19 +1,33 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
+import { Route, Redirect } from 'react-router';
 import { Layout } from './components/Layout';
 import { FetchEmployee } from './components/FetchEmployee';
 import EditEmployee from './components/EditEmployee';
+import Login from './components/Login';
+import PrivateRoute from './components/PrivateRoute';
 
 export default class App extends Component {
-  displayName = App.name
 
   render() {
     return (
       <Layout>
-        <Route path='/' exact component={FetchEmployee} />
-        <Route path='/employee/:id' component={EditEmployee} />
-        <Route path='/add/' exact  component={EditEmployee} /> 
+        <Route path='/login/' exact component={Login} />
+        <PrivateRoute path='/' exact component={FetchEmployee} />
+        <PrivateRoute path='/employee/:id' component={EditEmployee} />
+        <PrivateRoute path='/add/' exact component={EditEmployee} />
       </Layout>
     );
+  }
+}
+
+const fakeAuth = {
+  isAuthenticated: false,
+  authenticate(cb) {
+    this.isAuthenticated = true
+    setTimeout(cb, 100)
+  },
+  signout(cb) {
+    this.isAuthenticated = false
+    setTimeout(cb, 100)
   }
 }

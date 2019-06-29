@@ -6,12 +6,12 @@ export class Layout extends Component {
   displayName = Layout.name
 
   render() {
-      return (
-          <Grid>
-            <Row>
-              {this.props.children}
-            </Row>
-          </Grid>
+    return (
+      <Grid>
+        <Row>
+          {this.props.children}
+        </Row>
+      </Grid>
     );
   }
 }

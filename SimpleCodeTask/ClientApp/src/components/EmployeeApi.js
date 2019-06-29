@@ -1,11 +1,21 @@
-﻿
+﻿import Auth from "./Auth";
+
 class EmployeeApi {
+
+  static getHeader() {
+    return {
+      Authorization: "Bearer " + Auth.getToken()
+    };
+  }
 
   static getPage(pageNum, callback) {
     var url = 'api/employee/getpage/';
     url += pageNum ? pageNum : '';
-
-    fetch(url)
+    
+    fetch(url, {
+      method: "GET",
+      headers: EmployeeApi.getHeader()
+    })
       .then(response => response.json())
       .then(data => {
         // replacing UTC date string with an actual date object
@@ -15,7 +25,10 @@ class EmployeeApi {
   }
 
   static getById(id, callback) {
-    fetch('api/employee/getbyid/' + id)
+    fetch('api/employee/getbyid/' + id, {
+      method: "GET",
+      headers: EmployeeApi.getHeader()
+    })
       .then(responce => responce.json())
       .then(employee => {
         // replacing UTC date string with an actual date object
@@ -38,6 +51,7 @@ class EmployeeApi {
         fetch('api/employee/update', {
           method: 'PUT',
           body: employeeData,
+          headers: EmployeeApi.getHeader()
         })
           .then(data => {
             callback(data);
@@ -47,6 +61,7 @@ class EmployeeApi {
         fetch('api/employee/add', {
           method: 'POST',
           body: employeeData,
+          headers: EmployeeApi.getHeader()
         })
           .then(data => {
             callback(data);
@@ -57,7 +72,8 @@ class EmployeeApi {
 
   static delete(id, callback) {
     fetch('api/employee/delete/' + id, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: EmployeeApi.getHeader()
     })
       .then(responce => {
         callback(responce);

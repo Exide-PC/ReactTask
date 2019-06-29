@@ -77,7 +77,7 @@ class EditEmployee extends Component {
           <label htmlFor="salary">Salary</label>
         </p>
         <p>
-          <input id="salary" name="salary" type="text" value={salary} onChange={(e) => this.onTextChanged("salary", e)}/>
+          <input id="salary" name="salary" type="number" value={salary} onChange={(e) => this.onTextChanged("salary", e)}/>
         </p>
         <p>
           <label htmlFor="birthdate">Birth date</label>

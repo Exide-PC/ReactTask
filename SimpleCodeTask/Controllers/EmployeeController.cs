@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SimpleCodeTask.Services;
 
 namespace SimpleCodeTask.Controllers
 {
@@ -22,7 +24,14 @@ namespace SimpleCodeTask.Controllers
             .ToList();
 
         const int COUNT_ON_PAGE = 10;
+        IAuthService _authService;
 
+        public EmployeeController(IAuthService authService)
+        {
+            this._authService = authService;
+        }
+
+        [Authorize]
         [HttpGet("getpage/{pageNum}")]
         public ActionResult GetList(int pageNum)
         {
@@ -48,6 +57,7 @@ namespace SimpleCodeTask.Controllers
             return Json(data);
         }
 
+        [Authorize]
         [HttpPost("add")]
         public ActionResult InsertEmployee()
         {
@@ -65,6 +75,7 @@ namespace SimpleCodeTask.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPut("update")]
         public ActionResult UpdateEmployee()
         {
@@ -89,7 +100,8 @@ namespace SimpleCodeTask.Controllers
 
             return BadRequest();
         }
-
+        
+        [Authorize]
         [HttpDelete("delete/{id}")]
         public ActionResult Delete(int id)
         {
