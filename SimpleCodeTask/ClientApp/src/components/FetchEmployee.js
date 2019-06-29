@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import EmployeeApi from './EmployeeApi';
-import { EmployeeTable } from './EmployeeTable';
+import EmployeeTable from './EmployeeTable';
 import PageSelector from './PageSelector';
 import { Link } from 'react-router-dom';
 
@@ -10,13 +10,13 @@ export class FetchEmployee extends Component {
     super(props);
     this.state = { loading: true };
 
-    EmployeeApi.get(1, (data) => {
+    EmployeeApi.getPage(1, (data) => {
       this.setState({ ...data, loading: false });
     });
   }
 
   onPageClick(pageNum) {
-    EmployeeApi.get(pageNum, (data) => {
+    EmployeeApi.getPage(pageNum, (data) => {
       this.setState({ ...data, loading: false });
     });
   }
@@ -24,7 +24,7 @@ export class FetchEmployee extends Component {
   onDelete(id) {
     EmployeeApi.delete(id, (resp) => {
       const { pageNum } = this.state;
-      EmployeeApi.get(pageNum, (data) => {
+      EmployeeApi.getPage(pageNum, (data) => {
         this.setState({ ...data, loading: false })
       })
     });
@@ -44,7 +44,7 @@ export class FetchEmployee extends Component {
       <div>
         <h1>Employee list</h1>
         <p>This component demonstrates fetching data from the server.</p>
-        <Link to={'employee/1'}>
+        <Link to={'/add/'}>
             Add new
         </Link>
         <PageSelector

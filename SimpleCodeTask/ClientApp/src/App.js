@@ -11,7 +11,8 @@ export default class App extends Component {
     return (
       <Layout>
         <Route path='/' exact component={FetchEmployee} />
-        <Route path='/employee/:id' component={EditEmployee} /> 
+        <Route path='/employee/:id' component={EditEmployee} />
+        <Route path='/add/' exact  component={EditEmployee} /> 
       </Layout>
     );
   }

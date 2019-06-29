@@ -8,42 +8,76 @@ import EmployeeApi from './EmployeeApi';
 class EditEmployee extends Component {
   constructor(props) {
     super(props);
-    this.state = { startDate: new Date() };
+
+    const path = this.props.history.location.pathname.split("/");
+
+    if (path[1] == "employee") {
+      this.state = { loading: true };
+
+      const id = Number(path[2]);
+
+      EmployeeApi.getById(id, (json) => {
+        // as soon as we get json, we replace UTC string with Date object
+        json["birth"] = new Date(json["birth"]);
+        this.setState({ employee: json, loading: false });
+      });
+    }
+    else {
+      this.state = { employee: { birth: new Date() }, loading: false };
+    }
+  }
+
+  onTextChanged(field, e) {
+    const value = e.target.value;
+    this.state.employee[field] = value;
+
+    this.setState(this.state);
   }
 
   handleChange(value) {
-    this.setState({ startDate: value });
+    const employee = { ...this.state.employee, birth: value };
+    this.setState({ employee: employee });
   }
 
   onSubmit(event) {
+    event.preventDefault();
     const data = new FormData(event.target);
-    EmployeeApi.add(data, (responce) => {
+
+    // We want to pass the utc string instead of local dd/MM/yyyy
+    data.set("birth", this.state.employee.birth.toUTCString());
+
+    if (this.state.employee.id)
+      data.set("id", this.state.employee.id);
+
+    EmployeeApi.addOrUpdate(data, (responce) => {
       this.props.history.push("/");
     });
-
-    event.preventDefault();
   }
 
   render() {
+
+    const { employee, loading } = this.state;
+    const { id, name, email, salary, birth } = employee || {};
+
     return (
       <form onSubmit={(e) => this.onSubmit(e)}>
         <p>
           <label htmlFor="name">Name</label>
         </p>
         <p>
-          <input id="name" name="name" type="text" />
+          <input id="name" name="name" type="text" value={name} onChange={(e) => this.onTextChanged("name", e)} />
         </p>
         <p>
           <label htmlFor="email">Email</label>
         </p>
         <p>
-          <input id="email" name="email" type="email" />
+          <input id="email" name="email" type="email" value={email} onChange={(e) => this.onTextChanged("email", e)}/>
         </p>
         <p>
           <label htmlFor="salary">Salary</label>
         </p>
         <p>
-          <input id="salary" name="salary" type="text" />
+          <input id="salary" name="salary" type="text" value={salary} onChange={(e) => this.onTextChanged("salary", e)}/>
         </p>
         <p>
           <label htmlFor="birthdate">Birth date</label>
@@ -52,7 +86,8 @@ class EditEmployee extends Component {
           <DatePicker
             id="birthdate"
             name="birth"
-            selected={this.state.startDate}
+            dateFormat="dd/MM/yyyy"
+            selected={birth}
             onChange={(e) => this.handleChange(e)} />
         </p>
         <button class="btn btn-primary">Ok</button>

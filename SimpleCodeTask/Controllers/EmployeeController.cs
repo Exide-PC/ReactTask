@@ -9,11 +9,6 @@ namespace SimpleCodeTask.Controllers
     [Route("api/[controller]")]
     public class EmployeeController : Controller
     {
-        public EmployeeController()
-        {
-
-        }
-
         static List<Employee> list = Enumerable.Range(1, 30)
             .Select(n =>
             new Employee()
@@ -22,13 +17,13 @@ namespace SimpleCodeTask.Controllers
                 Name = n.ToString(),
                 Salary = n * 1000,
                 Email = $"{n}@mail.ru",
-                Birth = DateTime.Now
+                Birth = DateTime.UtcNow
             })
             .ToList();
 
         const int COUNT_ON_PAGE = 10;
 
-        [HttpGet("[action]/{pageNum}")]
+        [HttpGet("getpage/{pageNum}")]
         public ActionResult GetList(int pageNum)
         {
             int startIndex = (pageNum - 1) * COUNT_ON_PAGE;
@@ -58,6 +53,7 @@ namespace SimpleCodeTask.Controllers
         {
             Employee employee = new Employee()
             {
+                Id = list.Max(e => e.Id) + 1,
                 Name = Request.Form["name"],
                 Email = Request.Form["email"],
                 Salary = int.Parse(Request.Form["salary"]),
@@ -65,7 +61,33 @@ namespace SimpleCodeTask.Controllers
             };
 
             list.Add(employee);
+
             return Ok();
+        }
+
+        [HttpPut("update")]
+        public ActionResult UpdateEmployee()
+        {
+            Employee updatedEmployee = new Employee()
+            {
+                Id = int.Parse(Request.Form["id"]),
+                Name = Request.Form["name"],
+                Email = Request.Form["email"],
+                Salary = int.Parse(Request.Form["salary"]),
+                Birth = DateTime.Parse(Request.Form["birth"])
+            };
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                Employee currentEmployee = list[i];
+                if (currentEmployee.Id == updatedEmployee.Id)
+                {
+                    list[i] = updatedEmployee;
+                    return Ok();
+                }
+            }
+
+            return BadRequest();
         }
 
         [HttpDelete("delete/{id}")]
@@ -73,6 +95,12 @@ namespace SimpleCodeTask.Controllers
         {
             list = list.Where(e => e.Id != id).ToList();
             return Ok();
+        }
+
+        [HttpGet("getbyid/{id}")]
+        public Employee GetById(int id)
+        {
+            return list.First(e => e.Id == id);
         }
 
         public class Employee
