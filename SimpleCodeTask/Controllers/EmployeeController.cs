@@ -1,40 +1,64 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SimpleCodeTask.Db;
+using SimpleCodeTask.Models;
 using SimpleCodeTask.Services;
+
 
 namespace SimpleCodeTask.Controllers
 {
     [Route("api/[controller]")]
     public class EmployeeController : Controller
     {
-        static List<Employee> list = Enumerable.Range(1, 30)
-            .Select(n =>
-            new Employee()
-            {
-                Id = n,
-                Name = n.ToString(),
-                Salary = n * 1000,
-                Email = $"{n}@mail.ru",
-                Birth = DateTime.UtcNow
-            })
-            .ToList();
-
         const int COUNT_ON_PAGE = 10;
-        IAuthService _authService;
 
-        public EmployeeController(IAuthService authService)
+        readonly IAuthService _authService;
+        readonly EmployeeContext _db;
+
+        public EmployeeController(IAuthService authService, EmployeeContext db)
         {
             this._authService = authService;
+            this._db = db;
+
+            EnsureHasEntries();
+        }
+
+        void EnsureHasEntries()
+        {
+            // we want to see at least 10 entries for testing
+            if (_db.Employees.Count() < 10)
+            {
+                var testData = Enumerable.Range(1, 30)
+                .Select(n =>
+                new Employee()
+                {
+                    Name = n.ToString(),
+                    Salary = n * 1000,
+                    Email = $"{n}@mail.ru",
+                    Birth = DateTime.UtcNow
+                })
+                .ToList();
+
+                // By default records wont be inserted in the exact same order
+                // we added them to a collection, and we can't do anything 
+                // about it unless we call SaveChanges() after every addition
+                foreach (var employee in testData)
+                {
+                    this._db.Employees.Add(employee);
+                    this._db.SaveChanges();
+                }
+            }
         }
 
         [Authorize]
         [HttpGet("getpage/{pageNum}")]
         public ActionResult GetList(int pageNum)
         {
+            var list = this._db.Employees.OrderBy(e => e.Id).ToList();
+
             int startIndex = (pageNum - 1) * COUNT_ON_PAGE;
             int countAfterStart = list.Count - startIndex;
             countAfterStart = countAfterStart < 0 ? 0 : countAfterStart;
@@ -44,14 +68,14 @@ namespace SimpleCodeTask.Controllers
                 ? list.GetRange(startIndex, targetCount)
                 : null;
 
-            int pageCount = list.Count() / COUNT_ON_PAGE;
-            pageCount += list.Count() % COUNT_ON_PAGE != 0 ? 1 : 0;
+            int pageCount = list.Count / COUNT_ON_PAGE;
+            pageCount += list.Count % COUNT_ON_PAGE != 0 ? 1 : 0;
 
             var data = new
             {
                 pageCount,
                 pageNum,
-                employees = employees
+                employees
             };
 
             return Json(data);
@@ -63,14 +87,14 @@ namespace SimpleCodeTask.Controllers
         {
             Employee employee = new Employee()
             {
-                Id = list.Max(e => e.Id) + 1,
                 Name = Request.Form["name"],
                 Email = Request.Form["email"],
                 Salary = int.Parse(Request.Form["salary"]),
                 Birth = DateTime.Parse(Request.Form["birth"])
             };
 
-            list.Add(employee);
+            this._db.Employees.Add(employee);
+            this._db.SaveChanges();
 
             return Ok();
         }
@@ -88,41 +112,27 @@ namespace SimpleCodeTask.Controllers
                 Birth = DateTime.Parse(Request.Form["birth"])
             };
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                Employee currentEmployee = list[i];
-                if (currentEmployee.Id == updatedEmployee.Id)
-                {
-                    list[i] = updatedEmployee;
-                    return Ok();
-                }
-            }
-
-            return BadRequest();
+            this._db.Employees.Update(updatedEmployee);
+            this._db.SaveChanges();
+            return Ok();
         }
         
         [Authorize]
         [HttpDelete("delete/{id}")]
         public ActionResult Delete(int id)
         {
-            list = list.Where(e => e.Id != id).ToList();
+            Employee employee = this._db.Employees.FirstOrDefault(e => e.Id == id);
+
+            this._db.Employees.Remove(employee);
+            this._db.SaveChanges();
+
             return Ok();
         }
 
         [HttpGet("getbyid/{id}")]
         public Employee GetById(int id)
         {
-            return list.First(e => e.Id == id);
+            return this._db.Employees.FirstOrDefault(e => e.Id == id);
         }
-
-        public class Employee
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public int Salary { get; set; }
-            public string Email { get; set; }
-            public DateTime Birth { get; set; }
-        }
-
     }
 }
