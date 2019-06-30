@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
 
 export class EmployeeTable extends Component {
 
@@ -52,8 +52,8 @@ export class EmployeeTable extends Component {
                 <td>{employee.salary}</td>
                 <td>{employee.birth.toLocaleDateString()}</td>
                 <td>
-                  <button onClick={() => this.props.onDelete(employee.id)}>Delete</button>
-                  <button onClick={() => this.props.history.push("/employee/" + employee.id)}>Edit</button>
+                  <button className="btn btn-link" onClick={() => this.props.onDelete(employee.id)}>Delete</button>
+                  <button className="btn btn-link" onClick={() => this.props.history.push("/employee/" + employee.id)}>Edit</button>
                 </td>
               </tr>
             )}

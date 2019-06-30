@@ -27,8 +27,10 @@ class EditEmployee extends Component {
     }
   }
 
-  onTextChanged(field, e) {
+  onTextChanged(e) {
+    const field = e.target.id;
     const value = e.target.value;
+
     this.state.employee[field] = value;
 
     this.setState(this.state);
@@ -61,35 +63,27 @@ class EditEmployee extends Component {
 
     return (
       <form onSubmit={(e) => this.onSubmit(e)}>
-        <p>
-          <label htmlFor="name">Name</label>
-        </p>
-        <p>
-          <input id="name" name="name" type="text" value={name} onChange={(e) => this.onTextChanged("name", e)} />
-        </p>
-        <p>
-          <label htmlFor="email">Email</label>
-        </p>
-        <p>
-          <input id="email" name="email" type="email" value={email} onChange={(e) => this.onTextChanged("email", e)}/>
-        </p>
-        <p>
-          <label htmlFor="salary">Salary</label>
-        </p>
-        <p>
-          <input id="salary" name="salary" type="number" value={salary} onChange={(e) => this.onTextChanged("salary", e)}/>
-        </p>
-        <p>
-          <label htmlFor="birthdate">Birth date</label>
-        </p>
-        <p>
+        <div style={{ marginTop: "30px" }} class="form-group">
+          <label for="name">Employee name</label>
+          <input value={name} onChange={(e) => this.onTextChanged(e)} type="text" class="form-control" id="name" name="name" placeholder="Enter name"/>
+        </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input value={email} onChange={(e) => this.onTextChanged(e)} type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email" />
+        </div>
+        <div class="form-group">
+          <label for="salary">Salary</label>
+          <input value={salary} onChange={(e) => this.onTextChanged(e)} type="number" class="form-control" id="salary" name="salary" placeholder="Enter salary" />
+        </div>
+        <div class="form-group">
+          <label for="birth">Birthday</label><br/>
           <DatePicker
             id="birthdate"
             name="birth"
-            dateFormat="dd/MM/yyyy"
             selected={birth}
+            inline
             onChange={(e) => this.handleChange(e)} />
-        </p>
+        </div>
         <button class="btn btn-primary">Ok</button>
       </form>
     );

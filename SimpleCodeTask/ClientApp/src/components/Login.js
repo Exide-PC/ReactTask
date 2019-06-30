@@ -23,22 +23,19 @@ class Login extends Component {
 
   render() {
     return (
-      <form onSubmit={(e) => this.onSubmit(e)}>
-        <h1>Login page</h1>
-        <p>
-          <label htmlFor="login">Login</label>
-        </p>
-        <p>
-          <input id="login" name="login" type="text"/>
-        </p>
-        <p>
-          <label htmlFor="pass">Name</label>
-        </p>
-        <p>
-          <input id="password" name="password" type="text" />
-        </p>
-        <button>Войти</button>
-      </form>
+      <div style={{ maxWidth: 300, margin: 'auto', marginTop: 100 }}>
+        <form onSubmit={(e) => this.onSubmit(e)}>
+          <div class="form-group">
+            <label for="login">Login</label>
+            <input type="text" class="form-control" id="login" name="login" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" />
+          </div>
+          <button class="btn btn-primary" style={{ width: '100%', display: 'block' }}>Sign in</button>
+        </form>
+      </div>
     );
   }
 }

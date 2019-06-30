@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import EmployeeApi from './EmployeeApi';
 import EmployeeTable from './EmployeeTable';
 import PageSelector from './PageSelector';
-import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
-export class FetchEmployee extends Component {
+class FetchEmployee extends Component {
 
   constructor(props) {
     super(props);
@@ -42,11 +42,8 @@ export class FetchEmployee extends Component {
 
     return (
       <div>
-        <h1>Employee list</h1>
-        <p>This component demonstrates fetching data from the server.</p>
-        <Link to={'/add/'}>
-            Add new
-        </Link>
+        <h1>Employee database</h1>
+        <button className="btn btn-primary" onClick={() => this.props.history.push("/add")}>Add new</button><br />
         <PageSelector
           pageNum={pageNum}
           pageCount={pageCount}
@@ -58,3 +55,5 @@ export class FetchEmployee extends Component {
     );
   }
 }
+
+export default withRouter(FetchEmployee);

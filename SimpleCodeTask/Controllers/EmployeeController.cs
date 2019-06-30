@@ -23,15 +23,20 @@ namespace SimpleCodeTask.Controllers
             this._authService = authService;
             this._db = db;
 
+#if DEBUG
             EnsureHasEntries();
+#endif
         }
 
         void EnsureHasEntries()
         {
-            // we want to see at least 10 entries for testing
-            if (_db.Employees.Count() < 10)
+            // we want to see at least 3 pages full of entries for testing        {
+            const int testCount = 3 * COUNT_ON_PAGE;
+
+            // as soon as there are less than 10 left, we insert 30 more
+            if (_db.Employees.Count() < COUNT_ON_PAGE)
             {
-                var testData = Enumerable.Range(1, 30)
+                var testData = Enumerable.Range(1, testCount)
                 .Select(n =>
                 new Employee()
                 {
