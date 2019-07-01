@@ -10,7 +10,7 @@ class FetchEmployee extends Component {
     super(props);
     this.state = { loading: true };
 
-    EmployeeApi.getPage(1, (data) => {
+    EmployeeApi.getPage(0, (data) => {
       this.updateState(data);
     });
   }

@@ -87,7 +87,8 @@ class EditEmployee extends Component {
             inline
             onChange={(e) => this.handleChange(e)} />
         </div>
-        <button class="btn btn-primary">Ok</button>
+        <button type="submit" class="btn btn-primary">Ok</button>&nbsp;
+        <button type="cancel" class="btn btn-secondary" onClick={() => this.props.history.push("/")}>Cancel</button>
       </form>
     );
   }

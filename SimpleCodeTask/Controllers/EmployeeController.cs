@@ -71,7 +71,7 @@ namespace SimpleCodeTask.Controllers
                 (list.Count / COUNT_ON_PAGE) + (list.Count % COUNT_ON_PAGE != 0 ? 1 : 0);
 
             // page number adjustment in case it's out of bounds
-            pageNum = pageNum > pageCount ? pageCount : pageNum;
+            pageNum = pageNum > pageCount || pageNum <= 0 ? pageCount : pageNum;
 
             // calculating startIndex and record count to return
             int startIndex = (pageNum - 1) * COUNT_ON_PAGE;

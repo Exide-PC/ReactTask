@@ -9,9 +9,8 @@ class EmployeeApi {
   }
 
   static getPage(pageNum, callback) {
-    var url = 'api/employee/getpage/';
-    url += pageNum ? pageNum : '';
-    
+    var url = 'api/employee/getpage/' + pageNum;
+
     fetch(url, {
       method: "GET",
       headers: EmployeeApi.getHeader()

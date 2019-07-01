@@ -23,7 +23,7 @@ export class EmployeeTable extends Component {
 
     this.setState({ sort: sort });
   }
-
+  
   render() {
     let finalArray = this.state.sort
       ? this.props.employees.sort((a, b) => a[this.state.sort.column] - b[this.state.sort.column])
@@ -32,15 +32,14 @@ export class EmployeeTable extends Component {
     if (this.state.sort && this.state.sort.mode === "desc")
       finalArray.reverse();
 
+    const headers = ["Name", "Email", "Salary", "Birth"];
+
     return (
       <div>
         <table className='table'>
           <thead>
             <tr>
-              <th onClick={() => this.onHeaderClick("name")}>Name</th>
-              <th onClick={() => this.onHeaderClick("email")}>Email</th>
-              <th onClick={() => this.onHeaderClick("salary")}>Salary</th>
-              <th onClick={() => this.onHeaderClick("birth")}>Birthday</th>
+              {headers.map(h => <th onClick={() => this.onHeaderClick(h.toLowerCase())}>{h}</th>)}
             </tr>
           </thead>
           <tbody>
