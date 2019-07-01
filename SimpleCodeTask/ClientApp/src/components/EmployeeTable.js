@@ -25,7 +25,6 @@ export class EmployeeTable extends Component {
   }
 
   render() {
-
     let finalArray = this.state.sort
       ? this.props.employees.sort((a, b) => a[this.state.sort.column] - b[this.state.sort.column])
       : this.props.employees;

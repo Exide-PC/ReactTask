@@ -57,6 +57,9 @@ class EditEmployee extends Component {
   }
 
   render() {
+    if (this.state.loading)
+      return <h2><em>Loading...</em></h2>;
+
 
     const { employee, loading } = this.state;
     const { id, name, email, salary, birth } = employee || {};

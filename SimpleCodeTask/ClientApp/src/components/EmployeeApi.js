@@ -16,10 +16,14 @@ class EmployeeApi {
       method: "GET",
       headers: EmployeeApi.getHeader()
     })
-      .then(response => response.json())
+      .then(response => {
+        return response.status == 200 ? response.json() : undefined;
+      })
       .then(data => {
-        // replacing UTC date string with an actual date object
-        data.employees = data.employees.map(emp => EmployeeApi.prepareEmployee(emp));
+
+        // replacing UTC date string with an actual date object if we've got valid json
+        if (data)
+          data.employees = data.employees.map(emp => EmployeeApi.prepareEmployee(emp));
         callback(data);
       });
   }

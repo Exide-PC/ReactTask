@@ -33,8 +33,8 @@ namespace SimpleCodeTask.Controllers
             // we want to see at least 3 pages full of entries for testing        {
             const int testCount = 3 * COUNT_ON_PAGE;
 
-            // as soon as there are less than 10 left, we insert 30 more
-            if (_db.Employees.Count() < COUNT_ON_PAGE)
+            // as soon as there are no records left, we insert 30 more
+            if (_db.Employees.Count() == 0)
             {
                 var testData = Enumerable.Range(1, testCount)
                 .Select(n =>
@@ -47,7 +47,7 @@ namespace SimpleCodeTask.Controllers
                 })
                 .ToList();
 
-                // By default records wont be inserted in the exact same order
+                // By default test records wont be inserted in the exact same order
                 // we added them to a collection, and we can't do anything 
                 // about it unless we call SaveChanges() after every addition
                 foreach (var employee in testData)
@@ -60,21 +60,27 @@ namespace SimpleCodeTask.Controllers
 
         [Authorize]
         [HttpGet("getpage/{pageNum}")]
-        public ActionResult GetList(int pageNum)
+        public JsonResult GetList(int pageNum)
         {
             var list = this._db.Employees.OrderBy(e => e.Id).ToList();
 
+            // if we have nothing to show, then dont do anything
+            if (list.Count == 0) return null;
+
+            int pageCount = 
+                (list.Count / COUNT_ON_PAGE) + (list.Count % COUNT_ON_PAGE != 0 ? 1 : 0);
+
+            // page number adjustment in case it's out of bounds
+            pageNum = pageNum > pageCount ? pageCount : pageNum;
+
+            // calculating startIndex and record count to return
             int startIndex = (pageNum - 1) * COUNT_ON_PAGE;
             int countAfterStart = list.Count - startIndex;
             countAfterStart = countAfterStart < 0 ? 0 : countAfterStart;
             int targetCount = countAfterStart > COUNT_ON_PAGE ? COUNT_ON_PAGE : countAfterStart;
 
-            IEnumerable<Employee> employees = targetCount > 0
-                ? list.GetRange(startIndex, targetCount)
-                : null;
-
-            int pageCount = list.Count / COUNT_ON_PAGE;
-            pageCount += list.Count % COUNT_ON_PAGE != 0 ? 1 : 0;
+            // now we know exactly which records the frontend needs
+            IEnumerable<Employee> employees = list.GetRange(startIndex, targetCount);
 
             var data = new
             {
